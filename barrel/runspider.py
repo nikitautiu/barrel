@@ -4,9 +4,9 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
 from helpers import get_urls
-from spiders import YogaSpider
+from spiders import BarrelSpider
 from barrel.helpers import get_domain_from_url
-from barrel.spiders.jsspider import JSYogaSpider
+from barrel.spiders.jsspider import JSBarrelSpider
 
 
 def crawl(start_urls):
@@ -19,7 +19,7 @@ def crawl(start_urls):
     settings.set('LOG_LEVEL', 'INFO', priority='cmdline')
     crawler = CrawlerProcess(settings=settings)
 
-    crawler.crawl(JSYogaSpider, start_urls=start_urls)
+    crawler.crawl(JSBarrelSpider, start_urls=start_urls)
     crawler.start()
 
 def main():

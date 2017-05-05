@@ -5,16 +5,15 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
+import csv
 import logging
 import re
 
-import csv
-
-from items import KeywordItem
 from scrapy import signals
 from scrapy.exporters import JsonLinesItemExporter
 
-from helpers import get_urls
+from barrel.helpers import get_urls
+from barrel.items import KeywordItem
 
 
 class KeywordsFilter(object):
@@ -22,7 +21,7 @@ class KeywordsFilter(object):
     def from_crawler(cls, crawler):
         settings = crawler.settings
         return cls(settings.get('EMAIL_PATTERN'), settings.getdict('KEYWORDS'))
-    
+
     def __init__(self, email_pattern, keywords):
         self._items = {}
         self.keywords = keywords
@@ -114,7 +113,8 @@ class ReducePipeline(object):
             item_dict = self._collected[url]
 
             # build the kw columns
-            kw_checks = [item_dict[kw_name] for kw_name in self.kerywords.keys()]
+            kw_checks = [item_dict[kw_name] for kw_name in
+                         self.kerywords.keys()]
             email_list = ' '.join(
                 item_dict['emails'])  # join the unique emails with spaces
             row_list = [url, email_list] + kw_checks

@@ -1,11 +1,11 @@
 import scrapy_splash
 from scrapy_splash import SplashRequest
 
-from spiders.asbtract import AbstractSpider
+from barrel.spiders.abstract import AbstractSpider
 from barrel.settings import DOWNLOADER_MIDDLEWARES, SPIDER_MIDDLEWARES
 
 
-class JSYogaSpider(AbstractSpider):
+class JSBarrelSpider(AbstractSpider):
     name = 'jsbarrelspider'
     custom_settings = {
         # modify appropriate settings

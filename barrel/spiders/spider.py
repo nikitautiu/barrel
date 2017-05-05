@@ -1,9 +1,9 @@
 from scrapy import Request
 
-from spiders.asbtract import AbstractSpider
+from barrel.spiders.abstract import AbstractSpider
 
 
-class YogaSpider(AbstractSpider):
+class BarrelSpider(AbstractSpider):
     name = 'barrelspider'
 
     def build_request(self, url, start_url):

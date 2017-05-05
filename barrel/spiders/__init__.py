@@ -2,5 +2,5 @@
 #
 # Please refer to the documentation for information on how to create and manage
 # your spiders.
-from .spider import YogaSpider
-from .jsspider import JSYogaSpider
+from barrel.spiders.spider import BarrelSpider
+from barrel.spiders.jsspider import JSBarrelSpider

@@ -9,6 +9,8 @@ __pycache__/
 # IDEA
 .idea
 
+# dolphin
+.directory
 
 # Distribution / packaging
 .Python

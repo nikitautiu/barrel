@@ -1,8 +1,8 @@
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider
 
-from helpers import get_domain_from_url
-from items import PageItem
+from barrel.helpers import get_domain_from_url
+from barrel.items import PageItem
 
 
 class AbstractSpider(CrawlSpider):
