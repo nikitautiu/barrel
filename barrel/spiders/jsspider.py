@@ -21,7 +21,6 @@ class JSBarrelSpider(AbstractSpider):
         }),
 
         'DUPEFILTER_CLASS': 'scrapy_splash.SplashAwareDupeFilter'
-
     }
 
     def build_request(self, url, start_url):
