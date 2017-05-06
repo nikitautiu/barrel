@@ -2,25 +2,12 @@ import scrapy_splash
 from scrapy_splash import SplashRequest
 
 from barrel.spiders.abstract import AbstractSpider
-from barrel.settings import DOWNLOADER_MIDDLEWARES, SPIDER_MIDDLEWARES
+from barrel.settings import jssettings
 
 
 class JSBarrelSpider(AbstractSpider):
     name = 'jsbarrelspider'
-    custom_settings = {
-        # modify appropriate settings
-        'DOWNLOADER_MIDDLEWARES': DOWNLOADER_MIDDLEWARES.update({
-            'scrapy_splash.SplashCookiesMiddleware': 723,
-            'scrapy_splash.SplashMiddleware': 725,
-            'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810
-        }),
-
-        'SPIDER_MIDDLEWARES': SPIDER_MIDDLEWARES.update({
-            'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
-        }),
-
-        'DUPEFILTER_CLASS': 'scrapy_splash.SplashAwareDupeFilter'
-    }
+    custom_settings = vars(jssettings)  # dict from module
 
     def _build_request(self, url, start_url):
         req = SplashRequest(url, callback=self.parse)
