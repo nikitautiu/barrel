@@ -3,7 +3,7 @@ import sys
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
-from helpers import get_urls
+from helpers import get_urls_from_file
 from spiders import BarrelSpider
 from barrel.helpers import get_domain_from_url
 from barrel.spiders.jsspider import JSBarrelSpider
@@ -23,7 +23,7 @@ def crawl(start_urls):
     crawler.start()
 
 def main():
-    crawl(get_urls(sys.argv[1]))
+    crawl(get_urls_from_file(sys.argv[1]))
 
 if __name__ == '__main__':
     main()

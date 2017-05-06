@@ -10,20 +10,19 @@ class JSBarrelSpider(AbstractSpider):
     custom_settings = {
         # modify appropriate settings
         'DOWNLOADER_MIDDLEWARES': DOWNLOADER_MIDDLEWARES.update({
-
             'scrapy_splash.SplashCookiesMiddleware': 723,
             'scrapy_splash.SplashMiddleware': 725,
             'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810
         }),
 
         'SPIDER_MIDDLEWARES': SPIDER_MIDDLEWARES.update({
-        'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+            'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
         }),
 
         'DUPEFILTER_CLASS': 'scrapy_splash.SplashAwareDupeFilter'
     }
 
-    def build_request(self, url, start_url):
+    def _build_request(self, url, start_url):
         req = SplashRequest(url, callback=self.parse)
         req.meta['start_url'] = start_url
         req.meta['splash']['slot_policy'] = scrapy_splash.SlotPolicy.SINGLE_SLOT

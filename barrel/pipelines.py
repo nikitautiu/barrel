@@ -12,7 +12,7 @@ import re
 from scrapy import signals
 from scrapy.exporters import JsonLinesItemExporter
 
-from barrel.helpers import get_urls
+from barrel.helpers import get_urls_from_file
 from barrel.items import KeywordItem
 
 
@@ -80,7 +80,7 @@ class JsonExportPipeline(object):
 class ReducePipeline(object):
     def __init__(self):
         self._items = {}
-        self._urls = get_urls('urls.txt')
+        self._urls = get_urls_from_file('urls.txt')
 
         # populate collected fields
         self._collected = {}

@@ -4,7 +4,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 
-def get_urls(fname):
+def get_urls_from_file(fname):
     with open(fname) as f:
         content = f.readlines()
     # remove the whitespaces
