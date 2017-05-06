@@ -58,9 +58,13 @@ SPIDER_MIDDLEWARES = {
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
+    'scrapy.spidermiddlewares.depth.DepthMiddleware': 100,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
     'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
 }
+
+# make it act as a BFS rather than a DFS
+DEPTH_PRIORITY = 1
 
 # retries
 RETRY_ENABLED = False
