@@ -41,9 +41,6 @@ class AbstractSpider(CrawlSpider):
                                                       tags=('frame',),
                                                       attrs=('href', 'src'))
 
-        # initialize keyword extractor
-        self.item_extractor = HtmlExtractor(collect=settings.getdict('COLLECT_ITEMS'),
-                                            keywords=settings.getdict('KEYWORD_ITEMS'))
 
     def _get_url_list(self, settings):
         """Gets a list of urls to crawl from the setting parameters"""
@@ -79,7 +76,7 @@ class AbstractSpider(CrawlSpider):
         for link in links:
             yield self._build_request(link.url, start_url)
 
-        yield PageItem(content=self.item_extractor.extract(response),
+        yield PageItem(content=response,
                        start_url=start_url,
                        url=response.url)
 
