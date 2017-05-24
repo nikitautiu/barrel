@@ -1,6 +1,7 @@
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider
 
+from barrel.extractor import HtmlExtractor
 from barrel.helpers import get_domain_from_url, get_urls_from_file
 from barrel.items import PageItem
 
@@ -27,10 +28,10 @@ class AbstractSpider(CrawlSpider):
         # just get the domain part of the url```
         # do not enforce domains spider wide, just for this one
         # non frame links should not traverse domains
-        self.allowed_domains = [get_domain_from_url(url)
-                                for url in self.start_urls]
+        allowed_domains = [get_domain_from_url(url)
+                           for url in self.start_urls]
         self.link_extractor = LinkExtractor(unique=True,
-                                            allow_domains=self.allowed_domains)
+                                            allow_domains=allowed_domains)
         # frames should be allow to traverse domains
 
         follow_frames = settings.getbool('FOLLOW_FRAMES', False)
@@ -39,6 +40,10 @@ class AbstractSpider(CrawlSpider):
             self.frame_link_extractor = LinkExtractor(unique=True,
                                                       tags=('frame',),
                                                       attrs=('href', 'src'))
+
+        # initialize keyword extractor
+        self.item_extractor = HtmlExtractor(collect=settings.getdict('COLLECT_ITEMS'),
+                                            keywords=settings.getdict('KEYWORD_ITEMS'))
 
     def _get_url_list(self, settings):
         """Gets a list of urls to crawl from the setting parameters"""
@@ -61,18 +66,21 @@ class AbstractSpider(CrawlSpider):
             yield self._build_request(url, url)
 
     def parse(self, response):
+
         # get the first url
         # if it is not set set it to the current one.
         # otherwise, if recursing, propagate it via the meta
         start_url = response.meta.get('start_url', response.url)
         links = self.link_extractor.extract_links(response)
+
         if self.frame_link_extractor is not None:
             links += self.frame_link_extractor.extract_links(response)
 
         for link in links:
             yield self._build_request(link.url, start_url)
 
-        yield PageItem(content=response.text, start_url=start_url,
+        yield PageItem(content=self.item_extractor.extract(response),
+                       start_url=start_url,
                        url=response.url)
 
     def _build_request(self, url, start_url):

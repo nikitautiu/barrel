@@ -12,5 +12,5 @@ class JSBarrelSpider(AbstractSpider):
     def _build_request(self, url, start_url):
         req = SplashRequest(url, callback=self.parse)
         req.meta['start_url'] = start_url
-        req.meta['splash']['slot_policy'] = scrapy_splash.SlotPolicy.SINGLE_SLOT
+        req.meta['splash']['slot_policy'] = scrapy_splash.SlotPolicy.PER_DOMAIN
         return req

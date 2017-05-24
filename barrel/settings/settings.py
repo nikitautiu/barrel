@@ -26,7 +26,7 @@ ROBOTSTXT_OBEY = True
 # JOBDIR = './cache'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 200
+CONCURRENT_REQUESTS = 16
 CONCURRENT_ITEMS = 100
 
 # Configure a delay for requests for the same website (default: 0)
@@ -87,7 +87,6 @@ RANDOM_UA_TYPE = 'desktop'
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'barrel.pipelines.KeywordsFilter': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -115,6 +114,10 @@ REACTOR_THREADPOOL_MAXSIZE = 20
 
 
 # custom settings
-EMAIL_PATTERN = r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+[a-zA-Z0-9]"
-KEYWORDS = {}
+COLLECT_ITEMS = {
+    'email': r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+[a-zA-Z0-9]"
+}
+KEYWORD_ITEMS = {
+    'google': r'google'
+}
 

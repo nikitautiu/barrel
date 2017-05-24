@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from barrel.pipelines import HtmlMatcher
+from barrel.extractor import HtmlMatcher, HtmlExtractor
 
 
-class TestContextMatcher(TestCase):
+class TestHtmlMatcher(TestCase):
     def test_extraction(self):
         """Test if matcher works properly"""
         # just xpath match
@@ -50,6 +50,13 @@ class TestContextMatcher(TestCase):
 
         # regex match
         extractor = HtmlMatcher(regex=r"ana", collect=False)
+        input_text = '<div class="class1">ana</div>'
+        expected = True
+        self.assertEqual(extractor.parse(input_text), expected)
+
+
+        # regex match
+        extractor = HtmlMatcher(regex=r"(a|b)na", collect=False)
         input_text = '<div class="class1">ana</div>'
         expected = True
         self.assertEqual(extractor.parse(input_text), expected)
@@ -115,4 +122,46 @@ class TestContextMatcher(TestCase):
         input_text = '<div class="class1">ana</div>'
         expected = []
         self.assertListEqual(extractor.parse(input_text), expected)
+
+        # xpath match
+        extractor = HtmlMatcher(xpath="//div/text()", collect=True)
+        input_text = '<p><div class="class1">ana</div> <div>aaa</div></p>'
+        expected = ['ana', 'aaa']
+        self.assertListEqual(extractor.parse(input_text), expected)
+        self.assertListEqual(extractor.parse(input_text), expected)
+
+        # css match
+        extractor = HtmlMatcher(css="div::text", collect=True)
+        input_text = '<p><div class="class1">ana</div> <div>aaa</div></p>'
+        expected = ['ana', 'aaa']
+        self.assertListEqual(extractor.parse(input_text), expected)
+
+
+class TestHtmlExractor(TestCase):
+    def test_extraction(self):
+        extractor = HtmlExtractor(collect={"ana": r"(A|B)na",
+                                           "divs": {"xpath": '//div/text()'},
+                                           "cls": {"css": ".cls::text"}},
+                                  keywords={"e": r"exists",
+                                            "css": {"css": ".cls"},
+                                            "xpath": {"xpath": "//p"},
+                                            "xpath2": {"xpath": "//a"}})
+        input_text = '<p><div class="class1">Anax</div> Bna ' \
+                     '<span class="cls">continut</span>' \
+                     'exists</p>'
+        results = extractor.extract(input_text)
+
+        self.assertListEqual(results['ana'], ['Ana', 'Bna'])
+        self.assertListEqual(results['divs'], ['Anax'])
+        self.assertListEqual(results['cls'], ['continut'])
+
+        self.assertEqual(results['e'], True)
+        self.assertEqual(results['css'], True)
+        self.assertEqual(results['xpath'], True)
+        self.assertEqual(results['xpath2'], False)
+
+
+
+
+
 
