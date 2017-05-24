@@ -9,12 +9,50 @@ import csv
 import logging
 import re
 
-from scrapy import signals
+from scrapy import signals, Selector
 from scrapy.exporters import JsonLinesItemExporter
 
 from barrel.helpers import get_urls_from_file
 from barrel.items import KeywordItem
 
+
+class HtmlMatcher(object):
+    """Class for matching text via xpath, css or regex"""
+    def __init__(self, regex=r".*", css=None, xpath=None, collect=False):
+        """Initializez the matcher
+        
+        Receives a regex patter for the text to search for. If unspecified, 
+        matches everything. The css and xpath arguments are optional and mutually
+        exclusive. If any is specified, the context is restricted to the matching 
+        context
+        """
+        if xpath is not None and css is not None:
+            raise ValueError('css and xpath are mutually exclusive')
+
+        self.regex = re.compile(regex)
+        self.css = css
+        self.xpath = xpath
+        self.collect = collect
+
+    def parse(self, text):
+        if not hasattr(text, 'xpath'):
+            # this means it is not already a selector
+            text = Selector(text=text)
+
+        if self.css is not None:
+            result = text.css(self.css).re(self.regex)
+        elif self.xpath is not None:
+            result = text.xpath(self.xpath).re(self.regex)
+        else:
+            result = text.re(self.regex)
+        # either boolean or list
+        if self.collect:
+            return result
+        return bool(result)
+
+
+class HtmlExtractor(object):
+    """Class """
 
 class KeywordsFilter(object):
     @classmethod
@@ -48,85 +86,3 @@ class KeywordsFilter(object):
         matches = {kw: pattrn.search(text) is not None
                    for (kw, pattrn) in self.kw_patterns.items()}
         return matches
-
-
-class JsonExportPipeline(object):
-    def __init__(self):
-        self.files = {}
-
-    @classmethod
-    def from_crawler(cls, crawler):
-        pipeline = cls()
-        crawler.signals.connect(pipeline.spider_opened, signals.spider_opened)
-        crawler.signals.connect(pipeline.spider_closed, signals.spider_closed)
-        return pipeline
-
-    def spider_opened(self, spider):
-        file = open('interm_results.json', 'w+b')
-        self.files[spider] = file
-        self.exporter = JsonLinesItemExporter(file)
-        self.exporter.start_exporting()
-
-    def spider_closed(self, spider):
-        self.exporter.finish_exporting()
-        file = self.files.pop(spider)
-        file.close()
-
-    def process_item(self, item, spider):
-        self.exporter.export_item(item)
-        return item
-
-
-class ReducePipeline(object):
-    def __init__(self):
-        self._items = {}
-        self._urls = get_urls_from_file('urls.txt')
-
-        # populate collected fields
-        self._collected = {}
-        for url in self._urls:
-            # the empty dict
-            item_dict = {'emails': set()}
-            item_dict.update({kw: False for kw in self.kerywords.keys().keys()})
-
-            self._collected[url] = item_dict
-
-    @classmethod
-    def from_crawler(cls, crawler):
-        pipeline = cls()
-        crawler.signals.connect(pipeline.spider_closed, signals.spider_closed)
-        return pipeline
-
-    def spider_closed(self, spider):
-        with open('results.csv', 'w+b') as csvfile:
-            csvwriter = csv.writer(csvfile, delimiter=',',
-                                   quotechar="'", quoting=csv.QUOTE_MINIMAL)
-
-            # build each row and output it to csv
-            csvwriter.writerow(['Domain', 'Email'] + self.kerywords.keys())
-            for row in self.build_rows():
-                csvwriter.writerow(row)
-
-    def build_rows(self):
-        """Build rows from the collected data"""
-        for url in self._urls:
-            item_dict = self._collected[url]
-
-            # build the kw columns
-            kw_checks = [item_dict[kw_name] for kw_name in
-                         self.kerywords.keys()]
-            email_list = ' '.join(
-                item_dict['emails'])  # join the unique emails with spaces
-            row_list = [url, email_list] + kw_checks
-
-            logging.info('Procesing Pipeline: wrote: %s', url)
-            # write it line by line to the file
-            yield row_list
-
-    def process_item(self, item, spider):
-        for kw in self.kerywords.keys():
-            if item['keywords'][kw]:
-                # toggle all available keywords
-                self._collected[item['start_url']][kw] = True
-        self._collected[item['start_url']]['emails'] |= set(item['emails'])
-        return item
