@@ -30,3 +30,7 @@ SCRAPY_SETTINGS_MODULE=local_settings scrapy barrel http://someurl.com/
 ```
 
 **Note:** All settings can be overriden with the `-s` option just la `scarpy crawl`
+
+**EXMAPLE:** To do a domain-wide javascript-enabled crawl that exports the results to
+a jsonlines file run the following command
+```SCRAPY_SETTINGS_MODULE=local_settings scrapy barrel -j -o a.json -t jsonlines -d 0 http://url.com```
