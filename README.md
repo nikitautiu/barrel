@@ -29,4 +29,4 @@ For more info on the syntax, check `barrel.extractor`
 SCRAPY_SETTINGS_MODULE=local_settings scrapy barrel http://someurl.com/
 ```
 
-*Note* All settings can be overriden with the `-s` option just la `scarpy crawl`
+**Note:** All settings can be overriden with the `-s` option just la `scarpy crawl`
