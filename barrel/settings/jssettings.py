@@ -1,6 +1,5 @@
 from barrel.settings.settings import DOWNLOADER_MIDDLEWARES, SPIDER_MIDDLEWARES
 
-
 DOWNLOADER_MIDDLEWARES.update({
     'scrapy_splash.SplashCookiesMiddleware': 723,
     'scrapy_splash.SplashMiddleware': 725,

@@ -1,24 +1,11 @@
-# -*- coding: utf-8 -*-
-
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
-
-import csv
-import logging
 import re
 
-from scrapy import signals, Selector
-from scrapy.exporters import JsonLinesItemExporter
-from scrapy.http import HtmlResponse
-
-from barrel.helpers import get_urls_from_file
-from barrel.items import KeywordItem
+from scrapy import Selector
 
 
 class HtmlMatcher(object):
     """Class for matching text via xpath, css or regex"""
+
     def __init__(self, regex=r".+", css=None, xpath=None, collect=False):
         """Initializez the matcher
         
@@ -50,7 +37,6 @@ class HtmlMatcher(object):
             else:
                 extracted = [text.text]
 
-
         result = []
         for extracted_str in extracted:
             for match in self.regex.finditer(extracted_str):
@@ -63,6 +49,7 @@ class HtmlMatcher(object):
 
 class HtmlExtractor(object):
     """Class for extracting/collecting from an html text"""
+
     def __init__(self, collect, keywords):
         """Initiliazes the extractor
         

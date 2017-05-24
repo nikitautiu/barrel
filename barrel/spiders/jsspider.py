@@ -1,8 +1,8 @@
 import scrapy_splash
 from scrapy_splash import SplashRequest
 
-from barrel.spiders.abstract import AbstractSpider
 from barrel.settings import jssettings
+from barrel.spiders.abstract import AbstractSpider
 
 
 class JSBarrelSpider(AbstractSpider):

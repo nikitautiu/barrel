@@ -1,6 +1,2 @@
-# This package will contain the spiders of your Scrapy project
-#
-# Please refer to the documentation for information on how to create and manage
-# your spiders.
-from barrel.spiders.spider import BarrelSpider
 from barrel.spiders.jsspider import JSBarrelSpider
+from barrel.spiders.spider import BarrelSpider

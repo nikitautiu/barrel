@@ -1,7 +1,6 @@
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider
 
-from barrel.extractor import HtmlExtractor
 from barrel.helpers import get_domain_from_url, get_urls_from_file
 from barrel.items import PageItem
 
@@ -40,7 +39,6 @@ class AbstractSpider(CrawlSpider):
             self.frame_link_extractor = LinkExtractor(unique=True,
                                                       tags=('frame',),
                                                       attrs=('href', 'src'))
-
 
     def _get_url_list(self, settings):
         """Gets a list of urls to crawl from the setting parameters"""
